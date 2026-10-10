@@ -2096,3 +2096,49 @@
     </script>
 </body>
 </html>
+
+<!-- Admin Login Modal -->
+<div id="adminLoginModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+  <div class="bg-dark-800 p-8 rounded-xl border border-cyan-500/30 w-96">
+    <h3 class="text-xl font-bold text-white mb-4">Admin Login</h3>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="mb-4">
+        <label class="block text-gray-400 text-sm mb-2">Username</label>
+        <input type="text" id="username" class="w-full bg-dark-900 border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500" required>
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-400 text-sm mb-2">Password</label>
+        <input type="password" id="password" class="w-full bg-dark-900 border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500" required>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeLoginModal()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+        <button type="submit" class="bg-cyan-500 text-dark-900 font-bold px-4 py-2 rounded hover:bg-cyan-400">Login</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Admin Login Handling
+function openLoginModal() {
+  document.getElementById('adminLoginModal').classList.remove('hidden');
+}
+
+function closeLoginModal() {
+  document.getElementById('adminLoginModal').classList.add('hidden');
+}
+
+function handleLogin(event) {
+  event.preventDefault();
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+
+  if (user === 'admin' && pass === 'password123') {
+    alert('Login Success! Welcome Admin.');
+    localStorage.setItem('isAdmin', 'true');
+    closeLoginModal();
+  } else {
+    alert('Invalid Username or Password!');
+  }
+}
+</script>
