@@ -2141,4 +2141,36 @@ function handleLogin(event) {
     alert('Invalid Username or Password!');
   }
 }
+<script>
+// Admin Login Handling
+function openLoginModal() {
+  document.getElementById('adminLoginModal').classList.remove('hidden');
+}
+
+function closeLoginModal() {
+  document.getElementById('adminLoginModal').classList.add('hidden');
+}
+
+function handleLogin(event) {
+  event.preventDefault();
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+
+  if (user === 'admin' && pass === 'password123') {
+    // സിസ്റ്റത്തിലെ ഡാറ്റാബേസിൽ നിന്നും അഡ്മിൻ ഡീറ്റെയിൽസ് എടുക്കുന്നു
+    const db = getDB();
+    const adminUser = db.users.find(u => u.username === 'admin');
+    
+    // മെയിൻ സിസ്റ്റത്തിലേക്ക് ലോഗിൻ ചെയ്യുന്നു
+    setSession(adminUser);
+    closeLoginModal();
+    
+    // നോട്ടിഫിക്കേഷൻ കാണിക്കുകയും അഡ്മിൻ ഡാഷ്ബോർഡ് ഓപ്പൺ ചെയ്യുകയും ചെയ്യുന്നു
+    showToast('Login Success! Welcome Admin.', 'success');
+    navigate('admin-dashboard');
+  } else {
+    // തെറ്റായ പാസ്‌വേഡ് ആണെങ്കിൽ
+    showToast('Invalid Username or Password!', 'error');
+  }
+}
 </script>
