@@ -1,0 +1,2098 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH GATE ACADEMY | Learn. Create. Grow.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#070b14',
+                            800: '#0c1222',
+                            700: '#141e36',
+                            600: '#1e2c4f'
+                        },
+                        cyan: {
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            glow: 'rgba(6, 182, 212, 0.4)'
+                        },
+                        techBlue: {
+                            500: '#3b82f6',
+                            600: '#2563eb'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            background-color: #070b14;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism & Cyber Gradients */
+        .glass-panel {
+            background: rgba(12, 18, 34, 0.75);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(34, 211, 238, 0.15);
+        }
+        .glass-card {
+            background: rgba(20, 30, 54, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070b14; }
+        ::-webkit-scrollbar-thumb { background: #1e2c4f; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem;
+        }
+        .video-container iframe, .video-container video {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        /* Notification Toast */
+        #toast {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-[-150%] opacity-0 pointer-events-none flex items-center gap-3 px-5 py-3 rounded-xl border glass-panel shadow-2xl">
+        <i id="toast-icon" data-lucide="info" class="w-5 h-5 text-cyan-400"></i>
+        <span id="toast-msg" class="text-sm font-medium">Notification message</span>
+    </div>
+
+    <!-- MAIN NAVBAR -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-cyan-500/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-techBlue-600 flex items-center justify-center glow-cyan">
+                    <i data-lucide="cpu" class="w-6 h-6 text-black stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <span class="text-lg font-extrabold tracking-wider bg-gradient-to-r from-white via-slate-100 to-cyan-400 bg-clip-text text-transparent">TECH GATE</span>
+                    <span class="text-[10px] block tracking-widest text-cyan-400 font-mono -mt-1 uppercase">Academy</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Nav Buttons depending on Auth -->
+            <div id="nav-actions" class="flex items-center gap-3">
+                <!-- Rendered dynamically via JS -->
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTENT ROUTER -->
+    <main id="app-container" class="flex-grow flex flex-col">
+        <!-- Rendered dynamically -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel border-t border-slate-800/80 py-8 mt-16 text-slate-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-5 h-5 text-cyan-400"></i>
+                <span>&copy; <span id="current-year"></span> TECH GATE ACADEMY. Secure Enterprise LMS.</span>
+            </div>
+            <div class="flex items-center gap-6 text-xs text-slate-500">
+                <span class="hover:text-cyan-400 transition-colors cursor-pointer" onclick="openDemoCredentials()">View Demo Logins</span>
+                <span class="hover:text-cyan-400 transition-colors cursor-pointer">Privacy Policy</span>
+                <span class="hover:text-cyan-400 transition-colors cursor-pointer">Terms of Service</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL CONTAINER (For Admin Forms, Course Assign, Demo Creds) -->
+    <div id="modal-container" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <!-- Injected dynamic modal body -->
+    </div>
+
+    <!-- SCRIPT APPLICATION LOGIC -->
+    <script>
+        /**
+         * -------------------------------------------------------------------
+         * IN-MEMORY SECURE CLIENT DATABASE (Pre-seeded with Rich Functional Data)
+         * -------------------------------------------------------------------
+         */
+        const DB_KEY = 'TECH_GATE_ACADEMY_DATA_v1';
+
+        // Initial Seed Data with Real playable educational MP4s / Tech video previews
+        const defaultDatabase = {
+            users: [
+                {
+                    id: 'usr_admin',
+                    name: 'Academy Administrator',
+                    username: 'admin',
+                    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', // 'admin123'
+                    role: 'admin',
+                    status: 'active',
+                    createdAt: '2025-01-10'
+                },
+                {
+                    id: 'usr_rahul',
+                    name: 'Rahul Sharma',
+                    username: 'rahul2026',
+                    passwordHash: 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', // 'rahul123'
+                    role: 'student',
+                    status: 'active',
+                    createdAt: '2025-02-01'
+                },
+                {
+                    id: 'usr_alex',
+                    name: 'Alex Vance',
+                    username: 'alex_cyber',
+                    passwordHash: 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', // '123456'
+                    role: 'student',
+                    status: 'active',
+                    createdAt: '2025-02-15'
+                }
+            ],
+            courses: [
+                {
+                    id: 'crs_ai_video',
+                    title: 'AI Video Creation Masterclass',
+                    description: 'Master synthetic video generation, deepfake prevention, prompt architecture, and commercial AI workflows.',
+                    thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+                    status: 'published',
+                    createdAt: '2025-01-15'
+                },
+                {
+                    id: 'crs_prompt_eng',
+                    title: 'Prompt Engineering & LLM Architecture',
+                    description: 'Deep dive into LLM chaining, cognitive architectures, vector databases, and enterprise generative AI integration.',
+                    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80',
+                    status: 'published',
+                    createdAt: '2025-01-20'
+                },
+                {
+                    id: 'crs_cybersec',
+                    title: 'Zero Trust & Cloud Defense',
+                    description: 'Enterprise penetration testing, identity tokens, and automated DevSecOps pipelines.',
+                    thumbnail: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80',
+                    status: 'published',
+                    createdAt: '2025-02-05'
+                }
+            ],
+            classes: [
+                // Classes for AI Video Creation Masterclass
+                {
+                    id: 'cls_ai_1',
+                    courseId: 'crs_ai_video',
+                    order: 1,
+                    title: '1. Introduction to Generative Video Latents',
+                    description: 'An overview of diffusion models, latent space interpolation, and modern AI video compute pipelines.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: '12:45',
+                    thumbnail: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80',
+                    published: true
+                },
+                {
+                    id: 'cls_ai_2',
+                    courseId: 'crs_ai_video',
+                    order: 2,
+                    title: '2. Professional AI Video Tools & Synthesis',
+                    description: 'Hands-on review of Runway Gen-2, Pika Labs, Sora architectures, and open-source AnimateDiff nodes.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                    duration: '18:20',
+                    thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
+                    published: true
+                },
+                {
+                    id: 'cls_ai_3',
+                    courseId: 'crs_ai_video',
+                    order: 3,
+                    title: '3. Prompt Engineering for Camera Angles & Lighting',
+                    description: 'Structuring cinematic text prompts, controlling aperture, ISO emulation, and seed determinism.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                    duration: '15:10',
+                    published: true
+                },
+                {
+                    id: 'cls_ai_4',
+                    courseId: 'crs_ai_video',
+                    order: 4,
+                    title: '4. AI Image Creation for Keyframing',
+                    description: 'Setting up multi-controlnet rigs with Midjourney & FLUX to maintain spatial character consistency.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                    duration: '22:40',
+                    published: true
+                },
+                {
+                    id: 'cls_ai_5',
+                    courseId: 'crs_ai_video',
+                    order: 5,
+                    title: '5. High-Definition Upscaling & Motion Vectors',
+                    description: 'Using Topaz Video AI and latent upscalers to reach 4K 60FPS fluid video output.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                    duration: '19:15',
+                    published: true
+                },
+                {
+                    id: 'cls_ai_6',
+                    courseId: 'crs_ai_video',
+                    order: 6,
+                    title: '6. Advanced Commercial Post-Production Workflow',
+                    description: 'Compositing in DaVinci Resolve, neural audio voice cloning, and audio waveform synchronization.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+                    duration: '31:00',
+                    published: true
+                },
+                // Classes for Prompt Engineering
+                {
+                    id: 'cls_pe_1',
+                    courseId: 'crs_prompt_eng',
+                    order: 1,
+                    title: '1. Fundamentals of Tokenization & Attention',
+                    description: 'Discover how transformers tokenize syntax, calculate weights, and manage temperature hyperparameters.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+                    duration: '14:22',
+                    published: true
+                },
+                {
+                    id: 'cls_pe_2',
+                    courseId: 'crs_prompt_eng',
+                    order: 2,
+                    title: '2. Few-Shot In-Context Guidance & COT',
+                    description: 'Chain of Thought (CoT), tree-of-thought, and self-consistency prompting techniques.',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
+                    duration: '26:40',
+                    published: true
+                }
+            ],
+            // Enrollments: Maps studentId to courseId
+            enrollments: [
+                { id: 'enr_1', studentId: 'usr_rahul', courseId: 'crs_ai_video', assignedAt: '2025-02-02' },
+                { id: 'enr_2', studentId: 'usr_rahul', courseId: 'crs_prompt_eng', assignedAt: '2025-02-04' },
+                { id: 'enr_3', studentId: 'usr_alex', courseId: 'crs_cybersec', assignedAt: '2025-02-16' }
+            ],
+            // Progress: Student completed classes
+            progress: [
+                { studentId: 'usr_rahul', classId: 'cls_ai_1', completed: true, timestamp: '2025-02-03' },
+                { studentId: 'usr_rahul', classId: 'cls_ai_2', completed: true, timestamp: '2025-02-05' }
+            ]
+        };
+
+        // Load DB or Initialize
+        function getDB() {
+            const data = localStorage.getItem(DB_KEY);
+            if (!data) {
+                localStorage.setItem(DB_KEY, JSON.stringify(defaultDatabase));
+                return defaultDatabase;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveDB(db) {
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+        }
+
+        // SHA-256 Hash Helper for Passwords
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        /**
+         * -------------------------------------------------------------------
+         * STATE & AUTH SESSION MANAGEMENT
+         * -------------------------------------------------------------------
+         */
+        let currentUser = JSON.parse(sessionStorage.getItem('techgate_session') || 'null');
+        let currentRoute = 'home';
+        let routeParams = {};
+
+        function setSession(user) {
+            currentUser = user;
+            if (user) {
+                sessionStorage.setItem('techgate_session', JSON.stringify(user));
+            } else {
+                sessionStorage.removeItem('techgate_session');
+            }
+            updateNavbar();
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+            if (type === 'success') {
+                toastIcon.setAttribute('data-lucide', 'check-circle-2');
+                toast.className = 'fixed top-5 right-5 z-50 flex items-center gap-3 px-5 py-3 rounded-xl border border-emerald-500/50 bg-emerald-950/80 text-emerald-200 shadow-2xl transition-all duration-300';
+            } else if (type === 'error') {
+                toastIcon.setAttribute('data-lucide', 'alert-triangle');
+                toast.className = 'fixed top-5 right-5 z-50 flex items-center gap-3 px-5 py-3 rounded-xl border border-rose-500/50 bg-rose-950/80 text-rose-200 shadow-2xl transition-all duration-300';
+            } else {
+                toastIcon.setAttribute('data-lucide', 'info');
+                toast.className = 'fixed top-5 right-5 z-50 flex items-center gap-3 px-5 py-3 rounded-xl border border-cyan-500/50 bg-slate-900/90 text-cyan-200 shadow-2xl transition-all duration-300';
+            }
+            lucide.createIcons();
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+
+            setTimeout(() => {
+                toast.style.transform = 'translateY(-150%)';
+                toast.style.opacity = '0';
+            }, 3500);
+        }
+
+        /**
+         * -------------------------------------------------------------------
+         * ROUTER NAVIGATION
+         * -------------------------------------------------------------------
+         */
+        function navigate(route, params = {}) {
+            currentRoute = route;
+            routeParams = params;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // RBAC Access Guard
+            if (route.startsWith('admin') && (!currentUser || currentUser.role !== 'admin')) {
+                showToast('Unauthorized: Admin access required', 'error');
+                navigate('login', { role: 'admin' });
+                return;
+            }
+            if ((route === 'student-dashboard' || route === 'course' || route === 'learn') && (!currentUser || currentUser.role !== 'student')) {
+                showToast('Authentication required for student classroom', 'error');
+                navigate('login', { role: 'student' });
+                return;
+            }
+
+            renderView();
+            updateNavbar();
+        }
+
+        function updateNavbar() {
+            const container = document.getElementById('nav-actions');
+            if (!currentUser) {
+                container.innerHTML = `
+                    <button onclick="navigate('home')" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-2 transition-colors hidden sm:block">Home</button>
+                    <button onclick="navigate('login', {role: 'student'})" class="text-sm font-medium px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 transition-all flex items-center gap-2">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Student Login</span>
+                    </button>
+                    <button onclick="navigate('login', {role: 'admin'})" class="text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-techBlue-600 text-slate-950 font-semibold hover:opacity-90 transition-all flex items-center gap-2 glow-cyan">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span>Admin Portal</span>
+                    </button>
+                `;
+            } else if (currentUser.role === 'admin') {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2 mr-2 bg-cyan-950/40 border border-cyan-500/30 px-3 py-1.5 rounded-lg">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span class="text-xs font-mono text-cyan-300">ADMIN: ${currentUser.name}</span>
+                    </div>
+                    <button onclick="navigate('admin-dashboard')" class="text-xs font-semibold px-3 py-2 rounded-lg bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700 transition flex items-center gap-1.5">
+                        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button onclick="logout()" class="text-xs font-semibold px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 transition flex items-center gap-1.5">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Logout</span>
+                    </button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2 mr-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-lg">
+                        <div class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold font-mono">
+                            ${currentUser.name.charAt(0)}
+                        </div>
+                        <span class="text-xs text-slate-200 font-medium">${currentUser.name}</span>
+                    </div>
+                    <button onclick="navigate('student-dashboard')" class="text-xs font-semibold px-3 py-2 rounded-lg bg-slate-800 text-slate-200 hover:text-white transition flex items-center gap-1.5">
+                        <i data-lucide="book-open" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span>My Courses</span>
+                    </button>
+                    <button onclick="logout()" class="text-xs font-semibold px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 transition flex items-center gap-1.5">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Logout</span>
+                    </button>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function logout() {
+            setSession(null);
+            showToast('Logged out successfully', 'info');
+            navigate('home');
+        }
+
+        /**
+         * -------------------------------------------------------------------
+         * VIEW RENDERING
+         * -------------------------------------------------------------------
+         */
+        const app = document.getElementById('app-container');
+
+        function renderView() {
+            switch(currentRoute) {
+                case 'home':
+                    renderHomePage();
+                    break;
+                case 'login':
+                    renderLoginPage(routeParams.role || 'student');
+                    break;
+                case 'student-dashboard':
+                    renderStudentDashboard();
+                    break;
+                case 'course':
+                    renderCoursePage(routeParams.courseId);
+                    break;
+                case 'learn':
+                    renderLearnPage(routeParams.courseId, routeParams.classId);
+                    break;
+                case 'admin-dashboard':
+                    renderAdminPortal('dashboard');
+                    break;
+                case 'admin-students':
+                    renderAdminPortal('students');
+                    break;
+                case 'admin-courses':
+                    renderAdminPortal('courses');
+                    break;
+                case 'admin-classes':
+                    renderAdminPortal('classes');
+                    break;
+                case 'admin-enrollments':
+                    renderAdminPortal('enrollments');
+                    break;
+                default:
+                    renderHomePage();
+            }
+            lucide.createIcons();
+        }
+
+        /**
+         * 1. HOMEPAGE VIEW
+         */
+        function renderHomePage() {
+            const db = getDB();
+            app.innerHTML = `
+                <!-- HERO SECTION -->
+                <section class="relative pt-20 pb-28 overflow-hidden">
+                    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(6,182,212,0.18),rgba(255,255,255,0))]"></div>
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-300 text-xs font-mono mb-8 uppercase tracking-wider glow-cyan">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                            Exclusive High-Tech Recorded Academy
+                        </div>
+                        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
+                            TECH GATE <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-techBlue-500 bg-clip-text text-transparent">ACADEMY</span>
+                        </h1>
+                        <p class="text-xl sm:text-2xl text-cyan-300/90 font-mono tracking-widest font-semibold mb-6">
+                            Learn. Create. Grow.
+                        </p>
+                        <p class="max-w-2xl mx-auto text-slate-300 text-base sm:text-lg mb-10 leading-relaxed font-light">
+                            Private enterprise knowledge gateway. Access high-definition, curated engineering masterclasses, proprietary artificial intelligence workflows, and enterprise computing architectures.
+                        </p>
+                        
+                        <div class="flex flex-wrap items-center justify-center gap-4">
+                            <button onclick="navigate('login', {role: 'student'})" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-techBlue-600 text-slate-950 font-bold text-base hover:shadow-lg hover:shadow-cyan-500/25 transition-all flex items-center gap-2">
+                                <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                                <span>Student Learning Portal</span>
+                            </button>
+                            <button onclick="navigate('login', {role: 'admin'})" class="px-8 py-3.5 rounded-xl glass-card border border-slate-700 hover:border-cyan-500/40 text-slate-200 font-medium text-base hover:bg-slate-800 transition-all flex items-center gap-2">
+                                <i data-lucide="shield" class="w-5 h-5 text-cyan-400"></i>
+                                <span>Administrative Terminal</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STATS STRIP -->
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 mb-20 relative z-20">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 glass-panel rounded-2xl border border-cyan-500/20 shadow-2xl">
+                        <div class="text-center p-3 border-r border-slate-800/80">
+                            <div class="text-3xl font-extrabold text-cyan-400 font-mono">${db.courses.length}</div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Specialized Tracks</div>
+                        </div>
+                        <div class="text-center p-3 md:border-r border-slate-800/80">
+                            <div class="text-3xl font-extrabold text-white font-mono">${db.classes.length}+</div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">HD Video Modules</div>
+                        </div>
+                        <div class="text-center p-3 border-r border-slate-800/80">
+                            <div class="text-3xl font-extrabold text-cyan-400 font-mono">100%</div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Direct Mentor Auth</div>
+                        </div>
+                        <div class="text-center p-3">
+                            <div class="text-3xl font-extrabold text-white font-mono">Zero</div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Open Registration</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FEATURED COURSES PREVIEW -->
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+                                <i data-lucide="layers" class="w-6 h-6 text-cyan-400"></i>
+                                <span>Featured Masterclasses</span>
+                            </h2>
+                            <p class="text-sm text-slate-400 mt-1">Curated academy curriculum available to authenticated cohorts.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        ${db.courses.map(course => {
+                            const courseClasses = db.classes.filter(c => c.courseId === course.id && c.published);
+                            return `
+                                <div class="glass-card rounded-2xl overflow-hidden border border-slate-800/90 hover:border-cyan-500/40 transition-all flex flex-col group">
+                                    <div class="relative h-48 w-full overflow-hidden bg-slate-900">
+                                        <img src="${course.thumbnail}" alt="${course.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
+                                        <div class="absolute bottom-3 left-3 flex gap-2">
+                                            <span class="px-2.5 py-1 rounded bg-black/60 backdrop-blur-md text-[11px] font-mono text-cyan-300 border border-cyan-500/20">
+                                                ${courseClasses.length} Recorded Classes
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="p-5 flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <h3 class="font-bold text-lg text-slate-100 group-hover:text-cyan-300 transition-colors mb-2">${course.title}</h3>
+                                            <p class="text-sm text-slate-400 line-clamp-2 leading-relaxed mb-4">${course.description}</p>
+                                        </div>
+                                        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                                            <span class="text-xs text-slate-400 font-mono">Private Enrollment</span>
+                                            <button onclick="navigate('login', {role: 'student'})" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 group/btn">
+                                                <span>Access Course</span>
+                                                <i data-lucide="chevron-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </section>
+
+                <!-- WHY TECH GATE ACADEMY -->
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="glass-panel rounded-3xl p-8 sm:p-12 border border-cyan-500/20 relative overflow-hidden">
+                        <div class="max-w-2xl">
+                            <span class="text-cyan-400 font-mono text-xs uppercase tracking-widest">Enterprise Architecture</span>
+                            <h2 class="text-3xl font-extrabold text-white mt-2 mb-4">Why Tech Gate Academy?</h2>
+                            <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
+                                Tech Gate Academy operates as a private knowledge vault. We bypass public registration to guarantee dedicated mentor resources, pristine curriculum fidelity, and role-enforced student environments.
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                            <div class="p-5 rounded-xl bg-dark-800/60 border border-slate-800">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+                                    <i data-lucide="key" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-semibold text-white mb-2">Controlled Credentials</h3>
+                                <p class="text-xs text-slate-400 leading-relaxed">Accounts are manually provisioned by administrators ensuring only authorized, vetted learners receive access.</p>
+                            </div>
+                            <div class="p-5 rounded-xl bg-dark-800/60 border border-slate-800">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+                                    <i data-lucide="video" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-semibold text-white mb-2">Segmented Course Access</h3>
+                                <p class="text-xs text-slate-400 leading-relaxed">Students only see classes tailored and specifically assigned to their verified accounts with real-time completion tracking.</p>
+                            </div>
+                            <div class="p-5 rounded-xl bg-dark-800/60 border border-slate-800">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+                                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-semibold text-white mb-2">Air-Tight Data Security</h3>
+                                <p class="text-xs text-slate-400 leading-relaxed">Role-based access locks administrative menus, class publishing controls, and database operations behind rigorous hashes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        /**
+         * 2. LOGIN PAGE (STUDENT & ADMIN)
+         */
+        function renderLoginPage(role) {
+            const isAdmin = role === 'admin';
+            app.innerHTML = `
+                <div class="flex-grow flex items-center justify-center px-4 py-12">
+                    <div class="w-full max-w-md glass-panel p-8 rounded-2xl border ${isAdmin ? 'border-amber-500/30' : 'border-cyan-500/30'} shadow-2xl relative">
+                        <!-- Role Selector Tabs -->
+                        <div class="flex p-1 bg-dark-900 rounded-xl mb-6 border border-slate-800">
+                            <button onclick="navigate('login', {role: 'student'})" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${!isAdmin ? 'bg-cyan-500 text-black shadow' : 'text-slate-400 hover:text-white'}">
+                                Student Login
+                            </button>
+                            <button onclick="navigate('login', {role: 'admin'})" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${isAdmin ? 'bg-amber-500 text-black shadow' : 'text-slate-400 hover:text-white'}">
+                                Admin Portal
+                            </button>
+                        </div>
+
+                        <div class="text-center mb-6">
+                            <div class="w-12 h-12 mx-auto rounded-xl ${isAdmin ? 'bg-amber-500/20 text-amber-400' : 'bg-cyan-500/20 text-cyan-400'} flex items-center justify-center mb-3">
+                                <i data-lucide="${isAdmin ? 'lock' : 'graduation-cap'}" class="w-6 h-6"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-white">${isAdmin ? 'Admin Console Login' : 'Student Access Portal'}</h2>
+                            <p class="text-xs text-slate-400 mt-1">
+                                ${isAdmin ? 'Authenticate using master administrative credentials' : 'Enter the credentials issued by the academy administration'}
+                            </p>
+                        </div>
+
+                        <form id="login-form" onsubmit="handleAuthLogin(event, '${role}')" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-mono uppercase tracking-wider text-slate-300 mb-1.5">Username</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                        <i data-lucide="user" class="w-4 h-4"></i>
+                                    </div>
+                                    <input type="text" id="login-username" required placeholder="${isAdmin ? 'admin' : 'rahul2026'}" 
+                                        class="w-full bg-dark-900/90 border border-slate-700 focus:border-cyan-400 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-400 transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-mono uppercase tracking-wider text-slate-300 mb-1.5">Password</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                        <i data-lucide="key" class="w-4 h-4"></i>
+                                    </div>
+                                    <input type="password" id="login-password" required placeholder="••••••••" 
+                                        class="w-full bg-dark-900/90 border border-slate-700 focus:border-cyan-400 rounded-xl py-2.5 pl-10 pr-10 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-400 transition">
+                                    <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200">
+                                        <i data-lucide="eye" id="eye-login-password" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="text-xs text-slate-400 pt-1">
+                                ${!isAdmin ? '<i class="w-3.5 h-3.5 inline mr-1 text-cyan-400" data-lucide="info"></i>Student self-registration is closed. Contact Admin if you need an account.' : ''}
+                            </div>
+
+                            <button type="submit" class="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all shadow-lg ${isAdmin ? 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20' : 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-cyan-500/20'}">
+                                Authenticate Account
+                            </button>
+                        </form>
+
+                        <div class="mt-6 pt-5 border-t border-slate-800 text-center">
+                            <button onclick="openDemoCredentials()" class="text-xs text-cyan-400 hover:underline">
+                                Need demo accounts? Click to view credentials
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function togglePasswordVisibility(fieldId) {
+            const input = document.getElementById(fieldId);
+            const icon = document.getElementById('eye-' + fieldId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        async function handleAuthLogin(e, expectedRole) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            const db = getDB();
+            const user = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+
+            if (!user) {
+                showToast('User not found. Check username or contact Admin.', 'error');
+                return;
+            }
+
+            if (user.status !== 'active') {
+                showToast('Account has been deactivated by administration.', 'error');
+                return;
+            }
+
+            const hashed = await sha256(password);
+            if (user.passwordHash !== hashed) {
+                showToast('Invalid credentials provided.', 'error');
+                return;
+            }
+
+            if (user.role !== expectedRole) {
+                showToast(`Role mismatch: Account is registered as ${user.role}.`, 'error');
+                return;
+            }
+
+            // Successful login
+            setSession(user);
+            showToast(`Welcome back, ${user.name}!`, 'success');
+
+            if (user.role === 'admin') {
+                navigate('admin-dashboard');
+            } else {
+                navigate('student-dashboard');
+            }
+        }
+
+        /**
+         * 3. STUDENT DASHBOARD
+         */
+        function renderStudentDashboard() {
+            if (!currentUser || currentUser.role !== 'student') return;
+            const db = getDB();
+
+            // Find enrolled courses
+            const studentEnrollments = db.enrollments.filter(e => e.studentId === currentUser.id);
+            const enrolledCourseIds = studentEnrollments.map(e => e.courseId);
+            const enrolledCourses = db.courses.filter(c => enrolledCourseIds.includes(c.id));
+
+            // Compute overall stats
+            const studentProgressList = db.progress.filter(p => p.studentId === currentUser.id && p.completed);
+            const completedCount = studentProgressList.length;
+
+            // Total classes across enrolled courses
+            const enrolledClasses = db.classes.filter(cls => enrolledCourseIds.includes(cls.courseId) && cls.published);
+            const totalClassesCount = enrolledClasses.length;
+            const overallPercent = totalClassesCount > 0 ? Math.round((completedCount / totalClassesCount) * 100) : 0;
+
+            // Find continue learning recommendation (first incomplete class)
+            let nextClassToLearn = null;
+            let nextCourse = null;
+            for (const cls of enrolledClasses) {
+                const isCompleted = studentProgressList.some(p => p.classId === cls.id);
+                if (!isCompleted) {
+                    nextClassToLearn = cls;
+                    nextCourse = enrolledCourses.find(c => c.id === cls.courseId);
+                    break;
+                }
+            }
+
+            app.innerHTML = `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+                    <!-- STUDENT WELCOME HEADER -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/20 mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-cyan-950/60 text-cyan-400 font-mono text-xs border border-cyan-500/30 mb-2">
+                                <span>Verified Student ID:</span>
+                                <span class="text-white">${currentUser.username}</span>
+                            </div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Welcome back, ${currentUser.name}</h1>
+                            <p class="text-slate-400 text-sm mt-1">Tech Gate Academy Private Recorded Course Environment</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="bg-dark-900/90 p-4 rounded-xl border border-slate-800 text-center min-w-[110px]">
+                                <div class="text-2xl font-bold font-mono text-cyan-400">${enrolledCourses.length}</div>
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wider">Courses</div>
+                            </div>
+                            <div class="bg-dark-900/90 p-4 rounded-xl border border-slate-800 text-center min-w-[110px]">
+                                <div class="text-2xl font-bold font-mono text-white">${completedCount}/${totalClassesCount}</div>
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wider">Completed</div>
+                            </div>
+                            <div class="bg-dark-900/90 p-4 rounded-xl border border-slate-800 text-center min-w-[110px]">
+                                <div class="text-2xl font-bold font-mono text-emerald-400">${overallPercent}%</div>
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wider">Mastery</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTINUE LEARNING HERO BANNER -->
+                    ${nextClassToLearn && nextCourse ? `
+                        <div class="relative overflow-hidden rounded-2xl p-6 sm:p-8 mb-10 border border-cyan-500/30 bg-gradient-to-r from-dark-800 via-dark-700 to-cyan-950/40">
+                            <div class="relative z-10 max-w-xl">
+                                <span class="text-cyan-400 font-mono text-xs uppercase tracking-wider font-semibold flex items-center gap-2">
+                                    <i data-lucide="play-circle" class="w-4 h-4"></i>
+                                    <span>Continue Learning</span>
+                                </span>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white mt-1 mb-2">${nextClassToLearn.title}</h2>
+                                <p class="text-xs sm:text-sm text-slate-300 mb-4 line-clamp-1">${nextCourse.title} &bull; Class Duration: ${nextClassToLearn.duration}</p>
+                                <button onclick="navigate('learn', {courseId: '${nextCourse.id}', classId: '${nextClassToLearn.id}'})" class="px-6 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-sm transition-all flex items-center gap-2">
+                                    <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                                    <span>Resume Class</span>
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- ASSIGNED COURSES SECTION -->
+                    <div class="mb-12">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="book-marked" class="w-5 h-5 text-cyan-400"></i>
+                                    <span>My Assigned Courses</span>
+                                </h2>
+                                <p class="text-xs text-slate-400 mt-0.5">You can only access courses assigned to your student ID by Tech Gate admin.</p>
+                            </div>
+                        </div>
+
+                        ${enrolledCourses.length === 0 ? `
+                            <div class="text-center py-16 glass-card rounded-2xl border border-slate-800">
+                                <i data-lucide="folder-x" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
+                                <h3 class="text-base font-semibold text-slate-300">No Courses Assigned Yet</h3>
+                                <p class="text-xs text-slate-500 max-w-md mx-auto mt-1">Please contact the Tech Gate Academy administration to assign course tracks to your account.</p>
+                            </div>
+                        ` : `
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${enrolledCourses.map(course => {
+                                    const cClasses = db.classes.filter(c => c.courseId === course.id && c.published);
+                                    const completedInCourse = cClasses.filter(cls => studentProgressList.some(p => p.classId === cls.id)).length;
+                                    const coursePercent = cClasses.length > 0 ? Math.round((completedInCourse / cClasses.length) * 100) : 0;
+
+                                    return `
+                                        <div class="glass-card rounded-2xl overflow-hidden border border-slate-800/90 hover:border-cyan-500/40 transition-all flex flex-col justify-between group">
+                                            <div>
+                                                <div class="relative h-44 w-full bg-slate-900 overflow-hidden">
+                                                    <img src="${course.thumbnail}" alt="${course.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
+                                                    <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[11px] font-mono bg-black/70 border border-slate-700 text-cyan-300">
+                                                        ${cClasses.length} Lessons
+                                                    </span>
+                                                </div>
+                                                <div class="p-5">
+                                                    <h3 class="font-bold text-base text-white group-hover:text-cyan-300 transition-colors mb-2">${course.title}</h3>
+                                                    <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">${course.description}</p>
+                                                    
+                                                    <!-- Progress Bar -->
+                                                    <div class="space-y-1.5 mb-2">
+                                                        <div class="flex justify-between text-xs font-mono">
+                                                            <span class="text-slate-400">Progress: ${completedInCourse}/${cClasses.length} completed</span>
+                                                            <span class="text-cyan-400 font-bold">${coursePercent}%</span>
+                                                        </div>
+                                                        <div class="w-full h-1.5 bg-dark-900 rounded-full overflow-hidden">
+                                                            <div class="h-full bg-cyan-400 rounded-full transition-all duration-500" style="width: ${coursePercent}%"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="p-5 pt-0">
+                                                <button onclick="navigate('course', {courseId: '${course.id}'})" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-black text-cyan-400 text-xs font-bold transition flex items-center justify-center gap-2 border border-cyan-500/30">
+                                                    <span>Open Course Syllabus</span>
+                                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- RECENTLY COMPLETED CLASSES LOG -->
+                    <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                        <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Completed Recorded Classes</span>
+                        </h3>
+                        ${studentProgressList.length === 0 ? `
+                            <p class="text-xs text-slate-500">You haven't marked any classes as completed yet. Watch video modules and click 'Mark as Completed'.</p>
+                        ` : `
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                ${studentProgressList.map(item => {
+                                    const cls = db.classes.find(c => c.id === item.classId);
+                                    if (!cls) return '';
+                                    return `
+                                        <div class="p-3 bg-dark-900/60 rounded-xl border border-emerald-500/20 flex items-center justify-between">
+                                            <div class="overflow-hidden pr-2">
+                                                <p class="text-xs font-semibold text-slate-200 truncate">${cls.title}</p>
+                                                <span class="text-[10px] text-emerald-400 font-mono">Completed on ${item.timestamp}</span>
+                                            </div>
+                                            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * 4. COURSE SYLLABUS PAGE
+         */
+        function renderCoursePage(courseId) {
+            const db = getDB();
+            const course = db.courses.find(c => c.id === courseId);
+            if (!course) {
+                showToast('Course not found', 'error');
+                navigate('student-dashboard');
+                return;
+            }
+
+            // Verify authorization
+            const isAssigned = db.enrollments.some(e => e.studentId === currentUser.id && e.courseId === courseId);
+            if (!isAssigned && currentUser.role !== 'admin') {
+                showToast('Access denied: You are not assigned to this course', 'error');
+                navigate('student-dashboard');
+                return;
+            }
+
+            const classes = db.classes
+                .filter(c => c.courseId === courseId && (c.published || currentUser.role === 'admin'))
+                .sort((a,b) => a.order - b.order);
+
+            const studentProgressList = db.progress.filter(p => p.studentId === currentUser.id && p.completed);
+
+            app.innerHTML = `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+                    <button onclick="navigate('${currentUser.role === 'admin' ? 'admin-courses' : 'student-dashboard'}')" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-cyan-400 font-medium mb-6 transition">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        <span>Back to Dashboard</span>
+                    </button>
+
+                    <!-- COURSE HERO -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/20 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="md:col-span-2">
+                            <span class="px-2.5 py-1 rounded bg-cyan-950 text-cyan-400 text-xs font-mono uppercase tracking-wider border border-cyan-500/30">
+                                Recorded Video Track
+                            </span>
+                            <h1 class="text-2xl sm:text-4xl font-extrabold text-white mt-3 mb-3">${course.title}</h1>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">${course.description}</p>
+                            
+                            <div class="flex flex-wrap items-center gap-6 text-xs text-slate-400 font-mono">
+                                <div><i data-lucide="video" class="w-4 h-4 inline mr-1 text-cyan-400"></i> ${classes.length} Recorded Modules</div>
+                                <div><i data-lucide="clock" class="w-4 h-4 inline mr-1 text-cyan-400"></i> Full Access Guaranteed</div>
+                            </div>
+                        </div>
+                        <div class="rounded-xl overflow-hidden border border-slate-700 h-48 md:h-full relative bg-dark-900">
+                            <img src="${course.thumbnail}" alt="${course.title}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- CLASS RECORDINGS LIST -->
+                    <div class="space-y-4">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-4">
+                            <i data-lucide="list-video" class="w-5 h-5 text-cyan-400"></i>
+                            <span>Class Lessons & Recorded Sessions</span>
+                        </h2>
+
+                        ${classes.length === 0 ? `
+                            <div class="p-8 text-center glass-card rounded-xl text-slate-500 text-sm">
+                                No classes have been published for this course yet.
+                            </div>
+                        ` : `
+                            <div class="space-y-3">
+                                ${classes.map(cls => {
+                                    const isDone = studentProgressList.some(p => p.classId === cls.id);
+                                    return `
+                                        <div class="glass-card p-4 sm:p-5 rounded-xl border ${isDone ? 'border-emerald-500/30 bg-emerald-950/10' : 'border-slate-800'} hover:border-cyan-500/40 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-10 h-10 rounded-xl ${isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-dark-900 text-cyan-400'} border border-slate-700 flex items-center justify-center font-mono font-bold text-sm shrink-0">
+                                                    ${isDone ? '<i data-lucide="check" class="w-5 h-5"></i>' : cls.order}
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-200 text-base flex items-center gap-2">
+                                                        <span>${cls.title}</span>
+                                                        ${!cls.published ? '<span class="text-[10px] text-amber-400 bg-amber-950/50 px-1.5 py-0.5 rounded border border-amber-500/30">Draft</span>' : ''}
+                                                    </h3>
+                                                    <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${cls.description}</p>
+                                                    <span class="text-[11px] font-mono text-cyan-400 mt-1 inline-block">Duration: ${cls.duration}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                                                ${isDone ? `
+                                                    <span class="text-xs text-emerald-400 font-mono px-2 py-1 rounded bg-emerald-950/40 border border-emerald-500/30">
+                                                        Completed
+                                                    </span>
+                                                ` : ''}
+                                                <button onclick="navigate('learn', {courseId: '${course.id}', classId: '${cls.id}'})" class="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-xs transition flex items-center gap-1.5">
+                                                    <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                                                    <span>${isDone ? 'Re-watch' : 'Start Class'}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * 5. DEDICATED VIDEO LEARNING PAGE
+         */
+        function renderLearnPage(courseId, classId) {
+            const db = getDB();
+            const course = db.courses.find(c => c.id === courseId);
+            
+            // Check enrollment
+            const isAssigned = db.enrollments.some(e => e.studentId === currentUser.id && e.courseId === courseId);
+            if (!isAssigned && currentUser.role !== 'admin') {
+                showToast('Access denied to course materials.', 'error');
+                navigate('student-dashboard');
+                return;
+            }
+
+            const classes = db.classes
+                .filter(c => c.courseId === courseId && (c.published || currentUser.role === 'admin'))
+                .sort((a,b) => a.order - b.order);
+
+            let currentClass = classes.find(c => c.id === classId) || classes[0];
+            if (!currentClass) {
+                showToast('No published classes found', 'error');
+                navigate('course', { courseId });
+                return;
+            }
+
+            const currentIndex = classes.findIndex(c => c.id === currentClass.id);
+            const prevClass = currentIndex > 0 ? classes[currentIndex - 1] : null;
+            const nextClass = currentIndex < classes.length - 1 ? classes[currentIndex + 1] : null;
+
+            const isClassCompleted = db.progress.some(p => p.studentId === currentUser.id && p.classId === currentClass.id && p.completed);
+
+            app.innerHTML = `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow flex flex-col">
+                    <!-- TOP BREADCRUMB -->
+                    <div class="flex items-center justify-between mb-4">
+                        <button onclick="navigate('course', {courseId: '${courseId}'})" class="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-400 transition font-medium">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            <span>Course Outline: ${course.title}</span>
+                        </button>
+                        <span class="text-xs font-mono text-cyan-300">Module ${currentIndex + 1} of ${classes.length}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+                        <!-- VIDEO PLAYER & CLASS METADATA -->
+                        <div class="lg:col-span-2 flex flex-col">
+                            <!-- VIDEO FRAME CONTAINER -->
+                            <div class="video-container rounded-2xl bg-black border border-cyan-500/30 shadow-2xl relative">
+                                <video id="main-video-player" controls controlsList="nodownload" class="w-full h-full object-contain" poster="${course.thumbnail}">
+                                    <source src="${currentClass.videoUrl}" type="video/mp4">
+                                    Your browser does not support high definition HTML5 video streaming.
+                                </video>
+                            </div>
+
+                            <!-- CONTROLS & ACTIONS -->
+                            <div class="glass-panel p-5 rounded-2xl border border-slate-800 mt-4 flex flex-col gap-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div>
+                                        <h1 class="text-xl font-bold text-white">${currentClass.title}</h1>
+                                        <div class="flex items-center gap-3 text-xs text-slate-400 font-mono mt-1">
+                                            <span>Duration: ${currentClass.duration}</span>
+                                            <span>&bull;</span>
+                                            <span class="text-cyan-400">Stream Status: Encrypted MP4 Gateway</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- MARK AS COMPLETED BUTTON -->
+                                    <div>
+                                        <button id="complete-btn" onclick="toggleCompleteClass('${courseId}', '${currentClass.id}')" 
+                                            class="px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${isClassCompleted ? 'bg-emerald-500 text-black' : 'bg-slate-800 text-cyan-400 border border-cyan-500/30 hover:bg-slate-700'}">
+                                            <i data-lucide="${isClassCompleted ? 'check-circle' : 'circle'}" class="w-4 h-4"></i>
+                                            <span>${isClassCompleted ? 'Marked as Completed' : 'Mark as Completed'}</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <p class="text-sm text-slate-300 leading-relaxed border-t border-slate-800 pt-3">${currentClass.description}</p>
+
+                                <!-- PREV / NEXT NAVIGATION -->
+                                <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                                    ${prevClass ? `
+                                        <button onclick="navigate('learn', {courseId: '${courseId}', classId: '${prevClass.id}'})" class="px-4 py-2 rounded-lg bg-dark-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
+                                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                            <span>Prev: ${prevClass.title.substring(0, 20)}...</span>
+                                        </button>
+                                    ` : `<div></div>`}
+
+                                    ${nextClass ? `
+                                        <button onclick="navigate('learn', {courseId: '${courseId}', classId: '${nextClass.id}'})" class="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold flex items-center gap-1.5 transition">
+                                            <span>Next: ${nextClass.title.substring(0, 20)}...</span>
+                                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                        </button>
+                                    ` : `
+                                        <span class="text-xs text-emerald-400 font-mono">You reached the last class!</span>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SIDEBAR PLAYLIST / CLASS ORDER -->
+                        <div class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col h-[650px]">
+                            <div class="mb-4">
+                                <h3 class="font-bold text-white text-base">Track Curriculum</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">${course.title}</p>
+                            </div>
+
+                            <div class="overflow-y-auto space-y-2 flex-grow pr-1">
+                                ${classes.map((cls, idx) => {
+                                    const isDone = db.progress.some(p => p.studentId === currentUser.id && p.classId === cls.id && p.completed);
+                                    const isActive = cls.id === currentClass.id;
+
+                                    return `
+                                        <div onclick="navigate('learn', {courseId: '${courseId}', classId: '${cls.id}'})" 
+                                            class="p-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-3 border ${isActive ? 'bg-cyan-950/60 border-cyan-400 text-white shadow' : 'bg-dark-900/40 border-slate-800 hover:border-slate-700 text-slate-300'}">
+                                            <div class="flex items-center gap-3 overflow-hidden">
+                                                <div class="w-7 h-7 rounded-lg ${isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'} flex items-center justify-center text-xs font-mono shrink-0">
+                                                    ${isDone ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : (idx + 1)}
+                                                </div>
+                                                <div class="overflow-hidden">
+                                                    <p class="text-xs font-medium truncate ${isActive ? 'text-cyan-300 font-semibold' : ''}">${cls.title}</p>
+                                                    <span class="text-[10px] text-slate-400 font-mono">${cls.duration}</span>
+                                                </div>
+                                            </div>
+                                            ${isActive ? '<i data-lucide="play" class="w-3.5 h-3.5 text-cyan-400 fill-current shrink-0"></i>' : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleCompleteClass(courseId, classId) {
+            const db = getDB();
+            const existingIndex = db.progress.findIndex(p => p.studentId === currentUser.id && p.classId === classId);
+
+            if (existingIndex >= 0) {
+                // Toggle off
+                db.progress.splice(existingIndex, 1);
+                saveDB(db);
+                showToast('Progress removed for this class', 'info');
+            } else {
+                // Add completed
+                const now = new Date().toISOString().split('T')[0];
+                db.progress.push({
+                    studentId: currentUser.id,
+                    classId: classId,
+                    completed: true,
+                    timestamp: now
+                });
+                saveDB(db);
+                showToast('Class completed! Progress recorded in academy database.', 'success');
+            }
+
+            renderLearnPage(courseId, classId);
+        }
+
+        /**
+         * -------------------------------------------------------------------
+         * 6. ADMIN PORTAL (SECURE MANAGEMENT BACKEND)
+         * -------------------------------------------------------------------
+         */
+        function renderAdminPortal(subView = 'dashboard') {
+            if (!currentUser || currentUser.role !== 'admin') {
+                navigate('login', { role: 'admin' });
+                return;
+            }
+
+            const db = getDB();
+
+            // Computations
+            const totalStudents = db.users.filter(u => u.role === 'student').length;
+            const totalCourses = db.courses.length;
+            const totalClasses = db.classes.length;
+            const totalEnrollments = db.enrollments.length;
+
+            app.innerHTML = `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+                    <!-- ADMIN TOP HEADER -->
+                    <div class="glass-panel p-6 rounded-2xl border border-amber-500/30 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-xs font-mono text-amber-400 mb-1">
+                                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                                <span>TECH GATE ACADEMY &bull; ROOT MASTER CONSOLE</span>
+                            </div>
+                            <h1 class="text-2xl font-black text-white">Administrative Operations Terminal</h1>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="openAddStudentModal()" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition flex items-center gap-1.5 shadow">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                <span>Add Student</span>
+                            </button>
+                            <button onclick="openCreateCourseModal()" class="px-4 py-2 rounded-xl bg-techBlue-600 hover:bg-techBlue-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow">
+                                <i data-lucide="folder-plus" class="w-4 h-4"></i>
+                                <span>New Course</span>
+                            </button>
+                            <button onclick="openUploadClassModal()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition flex items-center gap-1.5 shadow">
+                                <i data-lucide="video" class="w-4 h-4"></i>
+                                <span>Upload Class</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <!-- ADMIN SIDEBAR -->
+                        <div class="glass-panel p-4 rounded-2xl border border-slate-800 md:col-span-1 space-y-1.5 h-fit">
+                            <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest px-3 py-1 block">Terminal Navigation</span>
+                            <button onclick="navigate('admin-dashboard')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition ${subView === 'dashboard' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-slate-800'}">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                                <span>Overview Metrics</span>
+                            </button>
+                            <button onclick="navigate('admin-students')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition ${subView === 'students' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-slate-800'}">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                                <span>Students Management</span>
+                            </button>
+                            <button onclick="navigate('admin-courses')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition ${subView === 'courses' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-slate-800'}">
+                                <i data-lucide="book-marked" class="w-4 h-4"></i>
+                                <span>Course Inventory</span>
+                            </button>
+                            <button onclick="navigate('admin-classes')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition ${subView === 'classes' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-slate-800'}">
+                                <i data-lucide="film" class="w-4 h-4"></i>
+                                <span>Recorded Video Classes</span>
+                            </button>
+                            <button onclick="navigate('admin-enrollments')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition ${subView === 'enrollments' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-300 hover:bg-slate-800'}">
+                                <i data-lucide="sliders" class="w-4 h-4"></i>
+                                <span>Student Enrollments</span>
+                            </button>
+                            <div class="pt-4 border-t border-slate-800 mt-2">
+                                <button onclick="resetSystemToDefault()" class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/40 transition flex items-center gap-2">
+                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                    <span>Reset Demo Data</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- SUBVIEW CONTENT PANELS -->
+                        <div class="md:col-span-3">
+                            ${renderSubView(subView, db, { totalStudents, totalCourses, totalClasses, totalEnrollments })}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSubView(subView, db, stats) {
+            switch(subView) {
+                case 'dashboard':
+                    return `
+                        <!-- STATS KPI ROW -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400 font-mono">Enrolled Students</span>
+                                <div class="text-3xl font-extrabold text-white font-mono mt-1">${stats.totalStudents}</div>
+                            </div>
+                            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400 font-mono">Total Courses</span>
+                                <div class="text-3xl font-extrabold text-cyan-400 font-mono mt-1">${stats.totalCourses}</div>
+                            </div>
+                            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400 font-mono">Video Classes</span>
+                                <div class="text-3xl font-extrabold text-white font-mono mt-1">${stats.totalClasses}</div>
+                            </div>
+                            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400 font-mono">Active Seats</span>
+                                <div class="text-3xl font-extrabold text-amber-400 font-mono mt-1">${stats.totalEnrollments}</div>
+                            </div>
+                        </div>
+
+                        <!-- RECENT STUDENTS & UPLOADS -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                                        <i data-lucide="user-check" class="w-4 h-4 text-cyan-400"></i>
+                                        <span>Recent Registered Students</span>
+                                    </h3>
+                                    <button onclick="navigate('admin-students')" class="text-xs text-cyan-400 hover:underline">View All</button>
+                                </div>
+                                <div class="space-y-3">
+                                    ${db.users.filter(u => u.role === 'student').slice(-4).reverse().map(stu => `
+                                        <div class="p-3 bg-dark-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                                            <div>
+                                                <p class="text-xs font-semibold text-white">${stu.name}</p>
+                                                <span class="text-[10px] text-cyan-300 font-mono">@${stu.username} &bull; Joined ${stu.createdAt}</span>
+                                            </div>
+                                            <span class="px-2 py-0.5 rounded text-[10px] ${stu.status === 'active' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/30' : 'bg-rose-950 text-rose-300'}">
+                                                ${stu.status}
+                                            </span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                                        <i data-lucide="video" class="w-4 h-4 text-amber-400"></i>
+                                        <span>Recent Uploaded Classes</span>
+                                    </h3>
+                                    <button onclick="navigate('admin-classes')" class="text-xs text-cyan-400 hover:underline">View All</button>
+                                </div>
+                                <div class="space-y-3">
+                                    ${db.classes.slice(-4).reverse().map(cls => {
+                                        const c = db.courses.find(item => item.id === cls.courseId);
+                                        return `
+                                            <div class="p-3 bg-dark-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                                                <div class="overflow-hidden pr-2">
+                                                    <p class="text-xs font-semibold text-white truncate">${cls.title}</p>
+                                                    <span class="text-[10px] text-slate-400 font-mono truncate block">${c ? c.title : 'Course'} &bull; ${cls.duration}</span>
+                                                </div>
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-mono shrink-0 ${cls.published ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/30' : 'bg-slate-800 text-slate-400'}">
+                                                    ${cls.published ? 'Published' : 'Draft'}
+                                                </span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                case 'students':
+                    const students = db.users.filter(u => u.role === 'student');
+                    return `
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                                <div>
+                                    <h2 class="text-lg font-bold text-white">Student Account Directory</h2>
+                                    <p class="text-xs text-slate-400">Only administrators can add, edit, or reset credentials for student accounts.</p>
+                                </div>
+                                <button onclick="openAddStudentModal()" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition flex items-center gap-2">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Provision Student Account</span>
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="text-slate-400 font-mono border-b border-slate-800 uppercase text-[11px]">
+                                        <tr>
+                                            <th class="py-3 px-3">Student Name</th>
+                                            <th class="py-3 px-3">Username</th>
+                                            <th class="py-3 px-3">Assigned Tracks</th>
+                                            <th class="py-3 px-3">Status</th>
+                                            <th class="py-3 px-3 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                                        ${students.map(s => {
+                                            const studentCourses = db.enrollments
+                                                .filter(e => e.studentId === s.id)
+                                                .map(e => db.courses.find(c => c.id === e.courseId)?.title)
+                                                .filter(Boolean);
+
+                                            return `
+                                                <tr class="hover:bg-slate-850/50">
+                                                    <td class="py-3.5 px-3 font-medium text-white flex items-center gap-2">
+                                                        <div class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold">
+                                                            ${s.name.charAt(0)}
+                                                        </div>
+                                                        <span>${s.name}</span>
+                                                    </td>
+                                                    <td class="py-3.5 px-3 font-mono text-cyan-400">@${s.username}</td>
+                                                    <td class="py-3.5 px-3">
+                                                        ${studentCourses.length > 0 ? `
+                                                            <div class="flex flex-wrap gap-1 max-w-xs">
+                                                                ${studentCourses.map(title => `<span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">${title}</span>`).join('')}
+                                                            </div>
+                                                        ` : `<span class="text-slate-500 italic">No courses assigned</span>`}
+                                                    </td>
+                                                    <td class="py-3.5 px-3">
+                                                        <span class="px-2 py-0.5 rounded text-[10px] font-mono ${s.status === 'active' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/20' : 'bg-rose-950 text-rose-300 border border-rose-500/20'}">
+                                                            ${s.status}
+                                                        </span>
+                                                    </td>
+                                                    <td class="py-3.5 px-3 text-right space-x-1.5 whitespace-nowrap">
+                                                        <button onclick="openAssignModal('${s.id}')" title="Assign Courses" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400">
+                                                            <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                                                        </button>
+                                                        <button onclick="toggleStudentStatus('${s.id}')" title="Toggle Active/Deactivate" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 ${s.status === 'active' ? 'text-amber-400' : 'text-emerald-400'}">
+                                                            <i data-lucide="${s.status === 'active' ? 'user-x' : 'user-check'}" class="w-3.5 h-3.5"></i>
+                                                        </button>
+                                                        <button onclick="openResetPasswordModal('${s.id}')" title="Reset Password" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+                                                            <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                                                        </button>
+                                                        <button onclick="deleteStudent('${s.id}')" title="Delete Account" class="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-400">
+                                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+
+                case 'courses':
+                    return `
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                                <div>
+                                    <h2 class="text-lg font-bold text-white">Course Repository</h2>
+                                    <p class="text-xs text-slate-400">Create, manage, and toggle course visibility across the academy.</p>
+                                </div>
+                                <button onclick="openCreateCourseModal()" class="px-4 py-2 rounded-xl bg-techBlue-600 hover:bg-techBlue-500 text-white text-xs font-bold transition flex items-center gap-2">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Create Course Track</span>
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${db.courses.map(crs => {
+                                    const classCount = db.classes.filter(c => c.courseId === crs.id).length;
+                                    const enrolledCount = db.enrollments.filter(e => e.courseId === crs.id).length;
+
+                                    return `
+                                        <div class="glass-card p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                                            <div class="flex gap-4">
+                                                <img src="${crs.thumbnail}" alt="${crs.title}" class="w-20 h-20 rounded-lg object-cover bg-slate-900 shrink-0">
+                                                <div class="overflow-hidden">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-mono ${crs.status === 'published' ? 'bg-cyan-950 text-cyan-300' : 'bg-slate-800 text-slate-400'}">
+                                                            ${crs.status}
+                                                        </span>
+                                                        <span class="text-[10px] text-slate-400 font-mono">${classCount} classes</span>
+                                                    </div>
+                                                    <h3 class="font-bold text-white text-sm mt-1 truncate">${crs.title}</h3>
+                                                    <p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">${crs.description}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="pt-4 mt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                                                <span class="text-slate-400 font-mono">${enrolledCount} Students Enrolled</span>
+                                                <div class="flex items-center gap-2">
+                                                    <button onclick="toggleCoursePublish('${crs.id}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">
+                                                        ${crs.status === 'published' ? 'Unpublish' : 'Publish'}
+                                                    </button>
+                                                    <button onclick="deleteCourse('${crs.id}')" class="px-2.5 py-1 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-[11px]">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                case 'classes':
+                    return `
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                                <div>
+                                    <h2 class="text-lg font-bold text-white">Recorded Video Classes</h2>
+                                    <p class="text-xs text-slate-400">Stream-ready recorded modules ordered by curriculum index.</p>
+                                </div>
+                                <button onclick="openUploadClassModal()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition flex items-center gap-2">
+                                    <i data-lucide="upload" class="w-4 h-4"></i>
+                                    <span>Upload & Register Video</span>
+                                </button>
+                            </div>
+
+                            <div class="space-y-3">
+                                ${db.classes.map(cls => {
+                                    const parentCourse = db.courses.find(c => c.id === cls.courseId);
+
+                                    return `
+                                        <div class="glass-card p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-lg bg-dark-900 border border-slate-700 text-cyan-400 font-mono text-xs flex items-center justify-center font-bold">
+                                                    #${cls.order}
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-semibold text-white text-sm">${cls.title}</h3>
+                                                    <p class="text-xs text-slate-400 font-mono">
+                                                        Track: <span class="text-cyan-300">${parentCourse ? parentCourse.title : 'Unassigned'}</span> &bull; 
+                                                        Length: ${cls.duration}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                                <button onclick="togglePublishClass('${cls.id}')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium ${cls.published ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/20' : 'bg-slate-800 text-slate-400'}">
+                                                    ${cls.published ? 'Published' : 'Hidden Draft'}
+                                                </button>
+                                                <button onclick="deleteClass('${cls.id}')" class="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                case 'enrollments':
+                    return `
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                            <div class="mb-6">
+                                <h2 class="text-lg font-bold text-white">Student Enrollment & Course Assignment</h2>
+                                <p class="text-xs text-slate-400">Map verified student accounts to private academy course tracks.</p>
+                            </div>
+
+                            <div class="space-y-4">
+                                ${db.users.filter(u => u.role === 'student').map(student => {
+                                    const currentAssigned = db.enrollments
+                                        .filter(e => e.studentId === student.id)
+                                        .map(e => e.courseId);
+
+                                    return `
+                                        <div class="glass-card p-5 rounded-xl border border-slate-800">
+                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                                                <div>
+                                                    <h3 class="font-bold text-white text-sm">${student.name} <span class="text-xs font-mono text-cyan-400">(@${student.username})</span></h3>
+                                                    <p class="text-xs text-slate-400">Select checkboxes below to assign or revoke course tracks.</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-2 border-t border-slate-800">
+                                                ${db.courses.map(course => {
+                                                    const isChecked = currentAssigned.includes(course.id);
+                                                    return `
+                                                        <label class="flex items-center gap-2 p-2 rounded-lg bg-dark-900 border border-slate-800/80 cursor-pointer hover:border-cyan-500/30">
+                                                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCourseSeat('${student.id}', '${course.id}', this.checked)" class="rounded text-cyan-500 focus:ring-0">
+                                                            <span class="text-xs text-slate-200 select-none">${course.title}</span>
+                                                        </label>
+                                                    `;
+                                                }).join('')}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+            }
+        }
+
+        /**
+         * -------------------------------------------------------------------
+         * ADMIN CRUD ACTIONS
+         * -------------------------------------------------------------------
+         */
+        // Student status toggle
+        function toggleStudentStatus(studentId) {
+            const db = getDB();
+            const student = db.users.find(u => u.id === studentId);
+            if (!student) return;
+            student.status = student.status === 'active' ? 'inactive' : 'active';
+            saveDB(db);
+            showToast(`Student ${student.name} is now ${student.status}`, 'info');
+            renderView();
+        }
+
+        // Delete Student
+        function deleteStudent(studentId) {
+            if (!confirm('Are you sure you want to delete this student account? This also deletes their enrollments and progress.')) return;
+            const db = getDB();
+            db.users = db.users.filter(u => u.id !== studentId);
+            db.enrollments = db.enrollments.filter(e => e.studentId !== studentId);
+            db.progress = db.progress.filter(p => p.studentId !== studentId);
+            saveDB(db);
+            showToast('Student account deleted.', 'info');
+            renderView();
+        }
+
+        // Delete Course
+        function deleteCourse(courseId) {
+            if (!confirm('Delete this course? All associated classes and enrollments will be deleted.')) return;
+            const db = getDB();
+            db.courses = db.courses.filter(c => c.id !== courseId);
+            db.classes = db.classes.filter(c => c.courseId !== courseId);
+            db.enrollments = db.enrollments.filter(e => e.courseId !== courseId);
+            saveDB(db);
+            showToast('Course and dependent classes removed.', 'info');
+            renderView();
+        }
+
+        // Toggle Course Publish
+        function toggleCoursePublish(courseId) {
+            const db = getDB();
+            const course = db.courses.find(c => c.id === courseId);
+            if (!course) return;
+            course.status = course.status === 'published' ? 'draft' : 'published';
+            saveDB(db);
+            showToast(`Course visibility toggled to ${course.status}`, 'info');
+            renderView();
+        }
+
+        // Toggle Class Publish
+        function togglePublishClass(classId) {
+            const db = getDB();
+            const cls = db.classes.find(c => c.id === classId);
+            if (!cls) return;
+            cls.published = !cls.published;
+            saveDB(db);
+            showToast(`Class is now ${cls.published ? 'Published' : 'Draft'}`, 'info');
+            renderView();
+        }
+
+        // Delete Class
+        function deleteClass(classId) {
+            if (!confirm('Permanently delete this class?')) return;
+            const db = getDB();
+            db.classes = db.classes.filter(c => c.id !== classId);
+            db.progress = db.progress.filter(p => p.classId !== classId);
+            saveDB(db);
+            showToast('Class module removed.', 'info');
+            renderView();
+        }
+
+        // Toggle Enrollment Seat
+        function toggleCourseSeat(studentId, courseId, shouldEnroll) {
+            const db = getDB();
+            if (shouldEnroll) {
+                const exists = db.enrollments.some(e => e.studentId === studentId && e.courseId === courseId);
+                if (!exists) {
+                    db.enrollments.push({
+                        id: 'enr_' + Math.random().toString(36).substr(2, 9),
+                        studentId,
+                        courseId,
+                        assignedAt: new Date().toISOString().split('T')[0]
+                    });
+                }
+            } else {
+                db.enrollments = db.enrollments.filter(e => !(e.studentId === studentId && e.courseId === courseId));
+            }
+            saveDB(db);
+            showToast('Enrollment permissions updated', 'success');
+        }
+
+        // Reset system to default
+        function resetSystemToDefault() {
+            if (confirm('Reset academy database back to default initial seed?')) {
+                localStorage.removeItem(DB_KEY);
+                showToast('Academy database reset to factory seed.', 'info');
+                navigate('admin-dashboard');
+            }
+        }
+
+        /**
+         * -------------------------------------------------------------------
+         * MODAL CONTROLLERS
+         * -------------------------------------------------------------------
+         */
+        const modalContainer = document.getElementById('modal-container');
+
+        function closeModal() {
+            modalContainer.classList.add('hidden');
+            modalContainer.innerHTML = '';
+        }
+
+        // 1. ADD STUDENT MODAL
+        function openAddStudentModal() {
+            modalContainer.innerHTML = `
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/30 max-w-md w-full shadow-2xl relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <h2 class="text-xl font-bold text-white mb-1">Provision Student Account</h2>
+                    <p class="text-xs text-slate-400 mb-5">Create student credentials and assign initial course access.</p>
+
+                    <form onsubmit="handleCreateStudentSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Full Student Name</label>
+                            <input type="text" id="m-student-name" required placeholder="e.g. Rahul Sharma" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Username (Login ID)</label>
+                            <input type="text" id="m-student-username" required placeholder="e.g. rahul2026" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Initial Password</label>
+                            <input type="text" id="m-student-password" required placeholder="Set strong temporary password" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-2">Assign Initial Courses</label>
+                            <div class="space-y-1.5 max-h-36 overflow-y-auto">
+                                ${getDB().courses.map(c => `
+                                    <label class="flex items-center gap-2 text-xs text-slate-300">
+                                        <input type="checkbox" name="assign-course-checkbox" value="${c.id}" class="rounded text-cyan-500">
+                                        <span>${c.title}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs tracking-wider uppercase mt-4">
+                            Save & Generate Student Account
+                        </button>
+                    </form>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        async function handleCreateStudentSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('m-student-name').value.trim();
+            const username = document.getElementById('m-student-username').value.trim();
+            const password = document.getElementById('m-student-password').value;
+
+            const db = getDB();
+            if (db.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                showToast('Username already exists in Tech Gate Academy.', 'error');
+                return;
+            }
+
+            const passwordHash = await sha256(password);
+            const studentId = 'usr_' + Math.random().toString(36).substr(2, 9);
+
+            const newStudent = {
+                id: studentId,
+                name,
+                username,
+                passwordHash,
+                role: 'student',
+                status: 'active',
+                createdAt: new Date().toISOString().split('T')[0]
+            };
+            db.users.push(newStudent);
+
+            // Assign checked courses
+            const checkboxes = document.querySelectorAll('input[name="assign-course-checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                db.enrollments.push({
+                    id: 'enr_' + Math.random().toString(36).substr(2, 9),
+                    studentId: studentId,
+                    courseId: cb.value,
+                    assignedAt: new Date().toISOString().split('T')[0]
+                });
+            });
+
+            saveDB(db);
+            closeModal();
+            showToast(`Student ${name} successfully provisioned!`, 'success');
+            renderView();
+        }
+
+        // 2. CREATE COURSE MODAL
+        function openCreateCourseModal() {
+            modalContainer.innerHTML = `
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-techBlue-500/30 max-w-md w-full shadow-2xl relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <h2 class="text-xl font-bold text-white mb-1">Create Course Track</h2>
+                    <p class="text-xs text-slate-400 mb-5">Define course outline and initial thumbnail.</p>
+
+                    <form onsubmit="handleCreateCourseSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Course Title</label>
+                            <input type="text" id="m-course-title" required placeholder="e.g. AI Video Creation Masterclass" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Thumbnail URL</label>
+                            <input type="url" id="m-course-thumb" required value="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Description</label>
+                            <textarea id="m-course-desc" required rows="3" placeholder="Provide syllabus overview..." class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-techBlue-600 hover:bg-techBlue-500 text-white font-bold text-xs tracking-wider uppercase mt-4">
+                            Publish New Track
+                        </button>
+                    </form>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function handleCreateCourseSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('m-course-title').value.trim();
+            const thumbnail = document.getElementById('m-course-thumb').value.trim();
+            const description = document.getElementById('m-course-desc').value.trim();
+
+            const db = getDB();
+            const newCourse = {
+                id: 'crs_' + Math.random().toString(36).substr(2, 9),
+                title,
+                thumbnail,
+                description,
+                status: 'published',
+                createdAt: new Date().toISOString().split('T')[0]
+            };
+
+            db.courses.push(newCourse);
+            saveDB(db);
+            closeModal();
+            showToast('Course Track created!', 'success');
+            renderView();
+        }
+
+        // 3. UPLOAD VIDEO CLASS MODAL
+        function openUploadClassModal() {
+            const db = getDB();
+            modalContainer.innerHTML = `
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-amber-500/30 max-w-lg w-full shadow-2xl relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <h2 class="text-xl font-bold text-white mb-1">Upload Recorded Video Class</h2>
+                    <p class="text-xs text-slate-400 mb-5">Simulated enterprise chunked video upload pipeline.</p>
+
+                    <form onsubmit="handleUploadClassSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Target Course</label>
+                            <select id="m-class-course" required class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                                ${db.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Class Title</label>
+                                <input type="text" id="m-class-title" required placeholder="e.g. 7. Advanced Fine-Tuning" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Class Order #</label>
+                                <input type="number" id="m-class-order" required value="${db.classes.length + 1}" min="1" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Video Stream URL (MP4 Stream)</label>
+                            <input type="url" id="m-class-url" required value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Duration (MM:SS)</label>
+                                <input type="text" id="m-class-duration" required placeholder="18:30" value="15:45" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Publish Status</label>
+                                <select id="m-class-published" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                                    <option value="true">Published (Live for Students)</option>
+                                    <option value="false">Save as Draft</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">Module Description</label>
+                            <textarea id="m-class-desc" required rows="2" placeholder="Summary of this recorded lesson..." class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
+                        </div>
+
+                        <!-- Upload Progress Simulation Indicator -->
+                        <div id="upload-progress-box" class="hidden space-y-1">
+                            <div class="flex justify-between text-xs font-mono text-cyan-400">
+                                <span>Encoding & Storage Ingestion...</span>
+                                <span id="upload-percent">0%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-dark-900 rounded-full overflow-hidden">
+                                <div id="upload-bar" class="h-full bg-cyan-400 w-0 transition-all duration-200"></div>
+                            </div>
+                        </div>
+
+                        <button id="upload-submit-btn" type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs tracking-wider uppercase mt-4 flex items-center justify-center gap-2">
+                            <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+                            <span>Upload & Publish Class</span>
+                        </button>
+                    </form>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function handleUploadClassSubmit(e) {
+            e.preventDefault();
+            const courseId = document.getElementById('m-class-course').value;
+            const title = document.getElementById('m-class-title').value.trim();
+            const order = parseInt(document.getElementById('m-class-order').value) || 1;
+            const videoUrl = document.getElementById('m-class-url').value.trim();
+            const duration = document.getElementById('m-class-duration').value.trim();
+            const published = document.getElementById('m-class-published').value === 'true';
+            const description = document.getElementById('m-class-desc').value.trim();
+
+            const progressBox = document.getElementById('upload-progress-box');
+            const uploadBar = document.getElementById('upload-bar');
+            const uploadPercent = document.getElementById('upload-percent');
+            const submitBtn = document.getElementById('upload-submit-btn');
+
+            progressBox.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            let currentProgress = 0;
+            const interval = setInterval(() => {
+                currentProgress += 25;
+                uploadBar.style.width = currentProgress + '%';
+                uploadPercent.innerText = currentProgress + '%';
+
+                if (currentProgress >= 100) {
+                    clearInterval(interval);
+                    const db = getDB();
+                    const newClass = {
+                        id: 'cls_' + Math.random().toString(36).substr(2, 9),
+                        courseId,
+                        order,
+                        title,
+                        description,
+                        videoUrl,
+                        duration,
+                        published
+                    };
+                    db.classes.push(newClass);
+                    saveDB(db);
+                    closeModal();
+                    showToast('Video class successfully encoded & published!', 'success');
+                    renderView();
+                }
+            }, 120);
+        }
+
+        // 4. RESET PASSWORD MODAL
+        function openResetPasswordModal(studentId) {
+            const db = getDB();
+            const student = db.users.find(u => u.id === studentId);
+            if (!student) return;
+
+            modalContainer.innerHTML = `
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 max-w-sm w-full shadow-2xl relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <h2 class="text-lg font-bold text-white mb-1">Reset Password</h2>
+                    <p class="text-xs text-slate-400 mb-4">Set a new password for student <span class="text-cyan-400 font-mono">@${student.username}</span></p>
+
+                    <form onsubmit="handleResetPasswordSubmit(event, '${studentId}')" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-mono uppercase text-slate-300 mb-1">New Password</label>
+                            <input type="text" id="m-new-password" required placeholder="Enter new password" class="w-full bg-dark-900 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs uppercase">
+                            Update Student Password
+                        </button>
+                    </form>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        async function handleResetPasswordSubmit(e, studentId) {
+            e.preventDefault();
+            const newPassword = document.getElementById('m-new-password').value;
+            const db = getDB();
+            const student = db.users.find(u => u.id === studentId);
+            if (!student) return;
+
+            student.passwordHash = await sha256(newPassword);
+            saveDB(db);
+            closeModal();
+            showToast(`Password updated for @${student.username}`, 'success');
+            renderView();
+        }
+
+        // 5. ASSIGN COURSES MODAL
+        function openAssignModal(studentId) {
+            const db = getDB();
+            const student = db.users.find(u => u.id === studentId);
+            const studentEnrollments = db.enrollments.filter(e => e.studentId === studentId).map(e => e.courseId);
+
+            modalContainer.innerHTML = `
+                <div class="glass-panel p-6 rounded-2xl border border-cyan-500/30 max-w-md w-full shadow-2xl relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <h2 class="text-lg font-bold text-white mb-1">Assign Course Seats</h2>
+                    <p class="text-xs text-slate-400 mb-4">Managing tracks for student: <span class="text-cyan-300 font-semibold">${student.name}</span></p>
+
+                    <div class="space-y-2 mb-6">
+                        ${db.courses.map(course => {
+                            const isEnrolled = studentEnrollments.includes(course.id);
+                            return `
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-dark-900 border border-slate-800">
+                                    <div class="overflow-hidden pr-2">
+                                        <p class="text-xs font-semibold text-white truncate">${course.title}</p>
+                                        <span class="text-[10px] text-slate-500 font-mono">${course.status}</span>
+                                    </div>
+                                    <button onclick="toggleCourseSeat('${studentId}', '${course.id}', ${!isEnrolled}); openAssignModal('${studentId}');" class="px-3 py-1 rounded text-xs font-semibold ${isEnrolled ? 'bg-rose-950/60 text-rose-300 border border-rose-500/20' : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'}">
+                                        ${isEnrolled ? 'Revoke' : 'Assign'}
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <button onclick="closeModal(); renderView();" class="w-full py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold">
+                        Done & Close
+                    </button>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // 6. DEMO CREDENTIALS HELPER
+        function openDemoCredentials() {
+            modalContainer.innerHTML = `
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/40 max-w-md w-full shadow-2xl relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <div class="flex items-center gap-2 mb-2 text-cyan-400 font-mono text-xs uppercase">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>Tech Gate Academy Credentials</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-4">Sample Logins For Testing</h2>
+
+                    <div class="space-y-4 text-xs font-mono">
+                        <div class="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30">
+                            <span class="text-amber-400 font-bold block mb-1">ADMINISTRATOR PORTAL</span>
+                            <div>Username: <span class="text-white select-all">admin</span></div>
+                            <div>Password: <span class="text-white select-all">admin123</span></div>
+                            <span class="text-[11px] text-slate-400 block mt-1 font-sans">Full access to create courses, add students, upload video classes.</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/30">
+                            <span class="text-cyan-400 font-bold block mb-1">STUDENT 1 (Rahul Sharma)</span>
+                            <div>Username: <span class="text-white select-all">rahul2026</span></div>
+                            <div>Password: <span class="text-white select-all">rahul123</span></div>
+                            <span class="text-[11px] text-slate-400 block mt-1 font-sans">Enrolled in AI Video Creation & Prompt Engineering courses.</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-700">
+                            <span class="text-slate-300 font-bold block mb-1">STUDENT 2 (Alex Vance)</span>
+                            <div>Username: <span class="text-white select-all">alex_cyber</span></div>
+                            <div>Password: <span class="text-white select-all">123456</span></div>
+                            <span class="text-[11px] text-slate-400 block mt-1 font-sans">Enrolled in Zero Trust & Cloud Defense track.</span>
+                        </div>
+                    </div>
+
+                    <button onclick="closeModal()" class="w-full mt-6 py-2.5 rounded-xl bg-cyan-500 text-black font-bold text-xs uppercase">
+                        Got It
+                    </button>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-year').innerText = new Date().getFullYear();
+            getDB(); // Ensure initialized
+            updateNavbar();
+            renderView();
+        });
+    </script>
+</body>
+</html>
